@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>flv 视频播放示例</title>
+    <style type="text/css">
+
+        .demo-video{
+            background: #000;
+            width: 880px;
+            height: 560px;
+        }
+    </style>
+</head>
+<body>
+<h1>flv 视频播放示例</h1>
+
+<div id="app">
+    <video class="demo-video" ref="player"></video>
+</div>
+
+<script type="text/javascript" src="vue.js"></script>
+<script type="text/javascript" src="flv.js"></script>
+
+<script>
+    const rtsp = "rtsp://182.150.24.194:9090/dss/monitor/param?cameraid=1000275$7&substream=1";
+    const id = "1";
+    new Vue({
+        el: "#app",
+        data() {
+            return {
+                player: null
+            }
+        },
+        mounted() {
+            console.log('vue 示例挂在了')
+            if (flvjs.isSupported()) {
+                console.log('flvjs存在')
+                let video = this.$refs.player;
+                console.log(video, ' video 获取到了吗');
+                if (video) {
+                    console.log('video存在了')
+                    this.player = flvjs.createPlayer({
+                        type: "flv",
+                        isLive: true,
+                        url: `ws://localhost:8888/rtsp/${id}?url=${rtsp}`
+                    });
+                    this.player.attachMediaElement(video);
+                    try {
+                        this.player.load();
+                        this.player.play();
+                    }catch (e) {
+                        console.log(e);
+                    }
+                }
+            }
+        },
+        beforeDestroy() {
+            this.player.destroy();
+        }
+    })
+</script>
+</body>
+</html>
